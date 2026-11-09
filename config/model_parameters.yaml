@@ -1,0 +1,76 @@
+# Model Parameters Configuration: Northeast India Airy Isostasy Analysis
+# ==============================================================================
+# NOTE: In accordance with scientific research protocols, physical parameter
+# values are NOT invented or assumed prior to a formal regional literature review.
+# All parameters below are explicitly designated as PENDING_LITERATURE_REVIEW.
+# ==============================================================================
+
+model:
+  type: "Airy-Heiskanen Local Isostasy"
+  status: "PENDING_LITERATURE_REVIEW"
+
+# Crustal and mantle density parameters
+densities:
+  crust:
+    value: null
+    unit: "kg/m^3"
+    status: "PENDING_LITERATURE_REVIEW"
+    description: "Standard/average crustal density (rho_c) for the study domain."
+    literature_candidates: []
+
+  mantle:
+    value: null
+    unit: "kg/m^3"
+    status: "PENDING_LITERATURE_REVIEW"
+    description: "Sub-Moho lithospheric mantle density (rho_m)."
+    literature_candidates: []
+
+  density_contrast:
+    value: null
+    unit: "kg/m^3"
+    status: "PENDING_LITERATURE_REVIEW"
+    description: "Density contrast across the Moho discontinuity: Delta_rho = rho_m - rho_c."
+
+# Crustal thickness reference parameters
+crustal_thickness:
+  reference_thickness_T0:
+    value: null
+    unit: "km"
+    status: "PENDING_LITERATURE_REVIEW"
+    description: "Reference crustal thickness at sea level (zero topographic elevation, h = 0)."
+    literature_candidates: []
+
+# Parameter uncertainties and sensitivity analysis ranges
+uncertainties:
+  crustal_density_uncertainty:
+    value: null
+    unit: "kg/m^3"
+    status: "PENDING_LITERATURE_REVIEW"
+    description: "Expected standard deviation / range for crustal density sensitivity analysis."
+
+  mantle_density_uncertainty:
+    value: null
+    unit: "kg/m^3"
+    status: "PENDING_LITERATURE_REVIEW"
+    description: "Expected standard deviation / range for mantle density sensitivity analysis."
+
+  reference_thickness_uncertainty:
+    value: null
+    unit: "km"
+    status: "PENDING_LITERATURE_REVIEW"
+    description: "Expected standard deviation / range for reference crustal thickness."
+
+# Planned regional literature review framework
+literature_review:
+  status: "PLANNED"
+  target_geological_provinces:
+    - "Shillong Plateau"
+    - "Mikir Hills"
+    - "Brahmaputra / Assam Valley"
+    - "Bengal Basin / Surma Basin"
+    - "Indo-Burma Ranges (Western flank)"
+  candidate_sources:
+    - "Regional seismic receiver function studies (e.g., Mitra et al., Ramesh et al., Kayal et al.)"
+    - "Deep seismic sounding (DSS) profiles across the Bengal and Assam Basins"
+    - "Global crustal models (CRUST1.0, LitMod3D regional adaptations)"
+    - "Satellite gravity inversion publications (GOCE / EGM2008 / WGM2012)"

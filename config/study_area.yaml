@@ -1,0 +1,44 @@
+# Study Area Configuration: Northeast India Airy Isostasy Analysis
+# Defines spatial bounds, horizontal coordinate reference system, and elevation reference properties.
+
+study_area:
+  name: "Northeast India & Adjoining Transboundary Regions"
+  description: "Fixed 5° × 5° geographic research window centered on Northeast India, including adjoining areas across international borders (Bangladesh, Myanmar, and Bhutan)."
+
+  # Geographic boundaries
+  bounds:
+    latitude_min: 22.0    # Degrees North
+    latitude_max: 27.0    # Degrees North
+    longitude_min: 90.0   # Degrees East
+    longitude_max: 95.0   # Degrees East
+
+  # Extent spans
+  extent:
+    latitude_span_deg: 5.0
+    longitude_span_deg: 5.0
+
+  # Geographic centre point
+  centre:
+    latitude: 24.5        # Degrees North
+    longitude: 92.5       # Degrees East
+
+  # Horizontal Coordinate Reference System (2D)
+  # EPSG:4326 is strictly a 2D geographic horizontal coordinate reference system (latitude/longitude on WGS 84 ellipsoid).
+  # It does NOT define a vertical reference system or physical height datum.
+  horizontal_crs:
+    name: "WGS 84 (2D Geographic)"
+    auth_name: "EPSG"
+    auth_code: 4326
+    epsg_string: "EPSG:4326"
+    dimension: 2
+
+  # Reference elevation (sea level datum for Airy isostatic roots)
+  # The physical vertical datum is independent of the horizontal CRS (EPSG:4326) and must be
+  # harmonized with the specific vertical datum of the Digital Elevation Model (DEM) chosen
+  # during data acquisition (e.g., orthometric height above EGM96 for SRTM, EGM2008 for
+  # Copernicus GLO-30, or geometric ellipsoidal height above WGS 84).
+  reference_elevation:
+    value: 0.0
+    unit: "m"
+    datum_status: "PENDING_DEM_SELECTION"
+    description: "Nominal sea level reference elevation (h = 0) against which topographic column loads and crustal roots are computed. Must be harmonized with the vertical datum of the acquired DEM."

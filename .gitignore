@@ -1,0 +1,123 @@
+# ==============================================================================
+# .gitignore: Northeast India Airy Isostasy Analysis
+# ==============================================================================
+# DATA-VERSIONING POLICY:
+# 1. Raw Input Datasets (data/raw/):
+#    - Large external raw source files (satellite gravity grids, DEMs, global crustal models)
+#      must NEVER be committed to Git. They should be fetched deterministically via
+#      ingestion scripts (e.g., using pooch) or archived in scientific repositories (Zenodo/OSF).
+# 2. Processed Datasets (data/processed/):
+#    - Heavy intermediate/processed raster grids (.nc, .tif, .grd, .h5) are excluded to prevent
+#      repository bloat.
+#    - Lightweight, reproducible processed outputs (profile CSVs, seismic station compilations,
+#      bounding box masks, GeoJSON boundaries, metadata manifests) ARE tracked in version control.
+# 3. Final Tables & Figures (results/):
+#    - Final summary tables (results/tables/*.csv, *.tsv, *.tex, *.md) and audited configurations
+#      (config/*.yaml) are tracked for scientific transparency, citation, and auditability.
+#    - Large temporary cache files, binary dumps, and scratch plots are excluded.
+# ==============================================================================
+
+# --- Python Bytecode & Compilation Artifacts ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# --- Python Virtual Environments ---
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# --- Jupyter Notebook Artifacts ---
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+.virtual_documents/
+
+# --- IDEs, Text Editors & Operating System Files ---
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# --- Environment Configurations & Secrets ---
+.env
+.env.*
+!.env.example
+
+# --- Testing & Code Coverage ---
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# --- Raw Scientific Datasets (Always Excluded) ---
+data/raw/*
+!data/raw/README.md
+!data/raw/.gitkeep
+
+# --- Large Binary, Archive, and Grid Data Formats ---
+# Exclude multi-megabyte/gigabyte raster grids across data and temporary directories
+*.nc
+*.nc4
+*.grd
+*.tif
+*.tiff
+*.geotiff
+*.h5
+*.hdf5
+*.dat
+*.bin
+*.xyz
+*.tar
+*.tar.gz
+*.zip
+*.7z
+
+# --- Whitelist: Allow Small, Reproducible Processed Data Products ---
+# Allow tracking of lightweight tabular products, vector profiles, manifests, and metadata
+!data/processed/*.csv
+!data/processed/*.tsv
+!data/processed/*.json
+!data/processed/*.geojson
+!data/processed/*.yaml
+!data/processed/*.yml
+!data/processed/*.txt
+!data/processed/*.md
+!data/processed/.gitkeep
+
+# --- Results Management ---
+# Keep temporary scratch outputs and caches excluded
+results/scratch/
+results/tmp/
+results/**/*.tmp
+results/**/*.bak
+
+# Track final reproducible tables, figure manifests, and directory markers
+!results/tables/*
+!results/tables/.gitkeep
+!results/figures/.gitkeep
+!results/maps/.gitkeep

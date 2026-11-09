@@ -1,0 +1,36 @@
+# ==============================================================================
+# Northeast India Airy Isostasy Analysis - Python Dependencies
+# ==============================================================================
+
+# Core Numerical & Multidimensional Data
+# Note: Python 3.13+ requires numpy>=2.1.0 for native binary wheels on Windows
+numpy>=1.24.0
+scipy>=1.10.0
+pandas>=2.0.0
+xarray>=2023.1.0
+
+# Geospatial & Raster / Vector Processing
+rasterio>=1.3.0
+geopandas>=0.14.0
+shapely>=2.0.0
+pyproj>=3.6.0
+
+# Geophysics & Potential-Field Analysis
+harmonica>=0.6.0
+verde>=1.8.0
+pooch>=1.7.0
+
+# Configuration & Data Serialization
+pyyaml>=6.0
+
+# Mapping, Plotting & Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+cartopy>=0.22.0
+
+# Interactive Exploration & Notebooks
+jupyter>=1.0.0
+ipykernel>=6.25.0
+
+# Quality Assurance & Testing Framework
+pytest>=7.4.0
