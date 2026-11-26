@@ -187,3 +187,70 @@ def test_grid_edge_effects_and_buffer_sensitivity():
     assert abs(g_unbuf[0]) < 0.70 * abs(g_buf[0])
     # Buffered edge (90.0E) is close to buffered center (92.5E)
     assert abs(g_buf[0]) > 0.90 * abs(g_buf[1])
+
+
+def test_bouguer_mass_balance_land_and_marine():
+    """
+    Independently verify that the Bouguer-consistent Airy and Pratt tesseroid
+    stacks satisfy:
+      - Land (h > 0): sum(thickness * delta_rho) == -rho_bouguer * h
+      - Marine (h < 0, d = -h): sum(thickness * delta_rho) == +(rho_bouguer - rho_w) * d
+      - Every tesseroid has bottom < top and exact expected radial bounds.
+    """
+    lons = np.array([92.0, 93.0])
+    lats = np.array([24.0, 25.0])
+    rho_b = 2670.0
+    rho_w = 1030.0
+
+    # Pure land cell (+1500 m)
+    elev_land = np.full((2, 2), 1500.0)
+    for builder in [build_airy_tesseroids, build_pratt_tesseroids]:
+        tess, dens = builder(lons, lats, elev_land, rho_w=rho_w, rho_bouguer=rho_b)
+        assert len(tess) == 8  # 4 cells * 2 layers (subsurface + stripping mismatch)
+        assert np.all(tess[:, 4] < tess[:, 5])  # bottom < top
+        total_col_mass = np.sum((tess[:, 5] - tess[:, 4]) * dens) / 4.0
+        assert total_col_mass == pytest.approx(-rho_b * 1500.0, rel=1e-12)
+
+    # Pure marine cell (-1500 m)
+    elev_mar = np.full((2, 2), -1500.0)
+    for builder in [build_airy_tesseroids, build_pratt_tesseroids]:
+        tess, dens = builder(lons, lats, elev_mar, rho_w=rho_w, rho_bouguer=rho_b)
+        assert len(tess) == 8  # 4 cells * 2 layers (subsurface + water-fill mismatch)
+        assert np.all(tess[:, 4] < tess[:, 5])
+        total_col_mass = np.sum((tess[:, 5] - tess[:, 4]) * dens) / 4.0
+        assert total_col_mass == pytest.approx((rho_b - rho_w) * 1500.0, rel=1e-12)
+
+
+def test_shallow_surface_layer_convergence():
+    """
+    Verify that a shallow 2-arc-min stripping-mismatch tesseroid [R, R+2000]
+    evaluated at its top face (r_obs = R+2000) with radial_adaptive_discretization=False
+    converges within 0.5% of an 8x8x4 refined sub-mesh.
+    """
+    dlon = dlat = 1.0 / 30.0
+    tess_1 = np.array([[
+        92.5 - 0.5 * dlon, 92.5 + 0.5 * dlon,
+        24.5 - 0.5 * dlat, 24.5 + 0.5 * dlat,
+        EARTH_MEAN_RADIUS_M, EARTH_MEAN_RADIUS_M + 2000.0,
+    ]])
+    dens_1 = np.array([80.0])
+
+    nx, ny, nz = 8, 8, 4
+    xs = np.linspace(92.5 - 0.5 * dlon, 92.5 + 0.5 * dlon, nx + 1)
+    ys = np.linspace(24.5 - 0.5 * dlat, 24.5 + 0.5 * dlat, ny + 1)
+    zs = np.linspace(EARTH_MEAN_RADIUS_M, EARTH_MEAN_RADIUS_M + 2000.0, nz + 1)
+    sub_tess = np.array([
+        [xs[i], xs[i + 1], ys[j], ys[j + 1], zs[k], zs[k + 1]]
+        for i in range(nx) for j in range(ny) for k in range(nz)
+    ])
+    sub_dens = np.full(len(sub_tess), 80.0)
+
+    g_single = compute_tesseroid_gravity(
+        np.array([92.5]), np.array([24.5]), np.array([2000.0]), tess_1, dens_1
+    )[0]
+    g_refined = compute_tesseroid_gravity(
+        np.array([92.5]), np.array([24.5]), np.array([2000.0]), sub_tess, sub_dens
+    )[0]
+
+    assert g_single > 0.0
+    assert g_single == pytest.approx(g_refined, rel=0.005)

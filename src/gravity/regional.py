@@ -15,6 +15,7 @@ import pandas as pd
 import xarray as xr
 
 from src.gravity.forward import (
+    WGM2012_BOUGUER_DENSITY,
     build_airy_tesseroids,
     build_pratt_tesseroids,
     compute_tesseroid_gravity,
@@ -62,18 +63,37 @@ def run_phase3_regional(project_root: str | Path = ".") -> tuple[xr.Dataset, pd.
         bouguer_core = ds_boug["z"].values.astype(np.float64)
 
     obs_lon, obs_lat = np.meshgrid(lon_core, lat_core)
-    obs_elev_m = np.maximum(0.0, elev_core)
+    # Use a 1.0 m numerical offset above the physical surface (z = max(0, h) + 1 m)
+    # to avoid Harmonica's adaptive-discretization ZeroDivisionError when observation
+    # points lie directly on the top face of shallow [R, R+h] / [R+h, R] tesseroids.
+    # Convergence checks show 0.1 m vs 1.0 m differs by < 0.002 mGal.
+    obs_elev_m = np.maximum(0.0, elev_core) + 1.0
 
-    print("Building buffered Airy tesseroids...")
+    rho_bouguer = WGM2012_BOUGUER_DENSITY
+
+    print("Building Bouguer-consistent buffered Airy tesseroids...")
     t_airy, d_airy = build_airy_tesseroids(
-        lon_buf, lat_buf, elev_buf, t0_km=t0_km, rho_c=rho_c, rho_m=rho_m, rho_w=rho_w
+        lon_buf,
+        lat_buf,
+        elev_buf,
+        t0_km=t0_km,
+        rho_c=rho_c,
+        rho_m=rho_m,
+        rho_w=rho_w,
+        rho_bouguer=rho_bouguer,
     )
     print(f"Evaluating Airy gravity ({len(t_airy)} tesseroids -> {obs_lon.size} obs pts)...")
     g_airy = compute_tesseroid_gravity(obs_lon, obs_lat, obs_elev_m, t_airy, d_airy)
 
-    print("Building buffered Pratt tesseroids...")
+    print("Building Bouguer-consistent buffered Pratt tesseroids...")
     t_pratt, d_pratt = build_pratt_tesseroids(
-        lon_buf, lat_buf, elev_buf, d_km=d_km, rho_0=rho_0, rho_w=rho_w
+        lon_buf,
+        lat_buf,
+        elev_buf,
+        d_km=d_km,
+        rho_0=rho_0,
+        rho_w=rho_w,
+        rho_bouguer=rho_bouguer,
     )
     print(f"Evaluating Pratt gravity ({len(t_pratt)} tesseroids -> {obs_lon.size} obs pts)...")
     g_pratt = compute_tesseroid_gravity(obs_lon, obs_lat, obs_elev_m, t_pratt, d_pratt)
@@ -108,6 +128,9 @@ def run_phase3_regional(project_root: str | Path = ".") -> tuple[xr.Dataset, pd.
             "rho_w_kgm3": rho_w,
             "pratt_d_km": d_km,
             "pratt_rho0_kgm3": rho_0,
+            "rho_bouguer_kgm3": rho_bouguer,
+            "n_airy_tesseroids": int(len(t_airy)),
+            "n_pratt_tesseroids": int(len(t_pratt)),
         },
     )
     out_nc = root / "data/processed/gravity/phase3_forward_gravity_core_22_27N_90_95E.nc"

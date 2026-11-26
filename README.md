@@ -136,16 +136,26 @@ Generated outputs are written to `data/processed/data_inventory.csv`, `results/t
 
 ---
 
-## 5. Current Project Status
+## 5. Current Project Status & Main Phase 3 Results
 
 | Phase | Scope | Status | Documentation |
 | :--- | :--- | :--- | :--- |
 | **Phase 1** | Data inspection, buffered/core extraction, CRUST1.0 fill-value repair | **Complete & Validated** | [`reports/phase1_data_validation.md`](reports/phase1_data_validation.md) |
 | **Phase 2** | Literature parameter selection, Airy & Pratt land/marine implementation | **Complete & Audited** | [`reports/phase2_isostasy_methodology.md`](reports/phase2_isostasy_methodology.md), [`reports/phase2_scientific_audit.md`](reports/phase2_scientific_audit.md) |
-| **Phase 3** | 3D spherical tesseroid forward gravity & Bouguer comparison | **Initial Implementation Complete; Audit Pending Resolution** | [`reports/phase3_forward_gravity_methodology.md`](reports/phase3_forward_gravity_methodology.md), [`reports/phase3_scientific_consistency_audit.md`](reports/phase3_scientific_consistency_audit.md) |
-| **Phase 4** | Independent seismic Moho validation, $V_p$–$\rho$ analysis, sensitivity/uncertainty & final synthesis | **Pending** | — |
+| **Phase 3** | Bouguer-consistent 3D spherical tesseroid forward gravity & comparison | **Complete & Frozen** | [`reports/phase3_forward_gravity_methodology.md`](reports/phase3_forward_gravity_methodology.md), [`reports/phase3_pratt_bouguer_mass_balance_derivation.md`](reports/phase3_pratt_bouguer_mass_balance_derivation.md) |
+| **Phase 4** | Independent seismic Moho validation, $V_p$–$\rho$ analysis, sensitivity/uncertainty & final synthesis | **Not Undertaken** | — |
 
-> **Important Note:** While Phase 3's forward modeling pipeline is implemented and passes all 21 automated tests, its independent scientific consistency audit ([`reports/phase3_scientific_consistency_audit.md`](reports/phase3_scientific_consistency_audit.md)) identified a Pratt Bouguer-stripping mismatch and minor reporting items that remain to be resolved prior to Phase 4 seismic validation.
+### Summary of Corrected Phase 3 Results (`22–27°N, 90–95°E`, $N = 22,801$)
+- **Observed WGM2012 Bouguer:** mean `+27.58 mGal`, std `56.55 mGal` (`-159.21` to `+165.83 mGal`)
+- **Airy Predicted Gravity (v2):** mean `-58.84 mGal`, std `32.81 mGal`, correlation $r = 0.6842$
+- **Pratt Predicted Gravity (v2):** mean `-57.86 mGal`, std `30.43 mGal`, correlation $r = 0.6862$
+- **Airy Residual (`Obs − Airy`):** mean `+86.42 mGal`, std `41.66 mGal`, RMS `95.93 mGal`
+- **Pratt Residual (`Obs − Pratt`):** mean `+85.44 mGal`, std `41.98 mGal`, RMS `95.19 mGal`
+- **Automated Verification:** **23/23** unit and numerical validation tests pass (`pytest -v`), including infinite-slab (`0.6801%`), finite-prism (`< 0.5%`), Bouguer mass-balance (`rel=1e-12`), and shallow-layer convergence (`0.212%`) benchmarks.
+
+> **Project Closure Note:** Scientific work is formally frozen at the completion of Phase 3. **Phase 4 was not undertaken, and independent seismic Moho validation of the Airy/Pratt predictions remains incomplete.** The positive mean regional residual (`+86.42 mGal` Airy; `+85.44 mGal` Pratt) is an unresolved regional offset; potential geological explanations remain hypotheses rather than established conclusions.
+
+See [`reports/final_project_summary.md`](reports/final_project_summary.md) and [`presentation_materials/`](presentation_materials/) for the complete closure report and presentation assets.
 
 ---
 
