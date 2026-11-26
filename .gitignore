@@ -109,6 +109,10 @@ data/raw/*
 !data/processed/*.md
 !data/processed/.gitkeep
 
+# --- Backup & Temporary Files ---
+*.bak
+*.tmp
+
 # --- Results Management ---
 # Keep temporary scratch outputs and caches excluded
 results/scratch/

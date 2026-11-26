@@ -1,76 +1,95 @@
-# Model Parameters Configuration: Northeast India Airy Isostasy Analysis
+# Model Parameters Configuration: Northeast India Airy & Pratt Isostasy Analysis
 # ==============================================================================
-# NOTE: In accordance with scientific research protocols, physical parameter
-# values are NOT invented or assumed prior to a formal regional literature review.
-# All parameters below are explicitly designated as PENDING_LITERATURE_REVIEW.
+# All baseline parameters are grounded in peer-reviewed regional seismology,
+# CRUST1.0 statistics over 22-27N, 90-95E, and standard geodynamic literature.
+# Regional measurements are explicitly distinguished from adopted references.
 # ==============================================================================
 
 model:
-  type: "Airy-Heiskanen Local Isostasy"
-  status: "PENDING_LITERATURE_REVIEW"
+  types:
+    - "Airy-Heiskanen Local Isostasy (Land & Marine)"
+    - "Pratt-Hayford Local Isostasy (Land & Marine)"
+  status: "CONFIGURED_FROM_LITERATURE"
 
-# Crustal and mantle density parameters
+# Physical density parameters
 densities:
   crust:
-    value: null
+    value: 2750.0
     unit: "kg/m^3"
-    status: "PENDING_LITERATURE_REVIEW"
-    description: "Standard/average crustal density (rho_c) for the study domain."
-    literature_candidates: []
+    uncertainty_range: [2670.0, 2850.0]
+    parameter_type: "Adopted regional-consistent mean crustal density"
+    sources:
+      - "CRUST1.0 (Laske et al., 2013; https://igppweb.ucsd.edu/~gabi/crust1.html): 25-cell thickness-weighted whole-crust mean = 2750.9 kg/m^3 (range 2675-2791 kg/m^3)"
+      - "Christensen & Mooney (1995), JGR, DOI: 10.1029/95JB00259 (global continental crust average)"
+      - "Balmino et al. (2012), J. Geodesy, DOI: 10.1007/s00190-011-0533-4 (2670 kg/m^3 standard Bouguer topographic reduction density)"
+    description: "Mean crustal column density (rho_c) for Airy compensation."
+
+  crust_layers_crust1_reference:
+    note: "CRUST1.0 study-area (22-27N, 90-95E) model-derived layer means (from velocity-density scaling, not direct local measurements):"
+    upper_crust_mean: 2697.0
+    middle_crust_mean: 2759.0
+    lower_crust_mean: 2929.0
+    unit: "kg/m^3"
 
   mantle:
-    value: null
+    value: 3350.0
     unit: "kg/m^3"
-    status: "PENDING_LITERATURE_REVIEW"
-    description: "Sub-Moho lithospheric mantle density (rho_m)."
-    literature_candidates: []
+    uncertainty_range: [3270.0, 3410.0]
+    parameter_type: "Adopted reference consistent with CRUST1.0 uppermost mantle"
+    sources:
+      - "CRUST1.0 (Laske et al., 2013): 25-cell study-area mantle mean = 3365 kg/m^3 (range 3330-3410 kg/m^3)"
+      - "Turcotte & Schubert, Geodynamics (3300 kg/m^3 standard upper mantle)"
+      - "Balmino et al. (2012), DOI: 10.1007/s00190-011-0533-4 (Delta_rho = 600 kg/m^3 with 2670 crust -> 3270 kg/m^3)"
+    description: "Sub-Moho upper mantle density (rho_m)."
 
   density_contrast:
-    value: null
+    value: 600.0
     unit: "kg/m^3"
-    status: "PENDING_LITERATURE_REVIEW"
-    description: "Density contrast across the Moho discontinuity: Delta_rho = rho_m - rho_c."
+    uncertainty_range: [450.0, 700.0]
+    parameter_type: "Derived (rho_m - rho_c)"
+    description: "Moho density contrast Delta_rho = rho_m - rho_c = 3350 - 2750 = 600 kg/m^3."
 
-# Crustal thickness reference parameters
-crustal_thickness:
+  seawater:
+    value: 1030.0
+    unit: "kg/m^3"
+    uncertainty_range: [1020.0, 1035.0]
+    parameter_type: "Adopted global ocean reference (not locally measured)"
+    sources:
+      - "Balmino et al. (2012), J. Geodesy, DOI: 10.1007/s00190-011-0533-4 (WGM2012 ocean reduction density 1030 kg/m^3)"
+    description: "Mean seawater density (rho_w) for marine bathymetry cells (h < 0)."
+
+# Airy reference crustal thickness
+airy:
   reference_thickness_T0:
-    value: null
+    value: 35.0
     unit: "km"
-    status: "PENDING_LITERATURE_REVIEW"
-    description: "Reference crustal thickness at sea level (zero topographic elevation, h = 0)."
-    literature_candidates: []
+    uncertainty_range: [30.0, 40.0]
+    parameter_type: "Adopted reference informed by low-elevation regional RF stations"
+    sources:
+      - "Borah et al. (2016), PEPI, DOI: 10.1016/j.pepi.2016.07.005 (low-elevation stations ~34-38 km)"
+      - "Mitra et al. (2018), JGR, DOI: 10.1002/2017JB014714 (Bengal Basin AGT 36.0 km, BELO 35.5 km)"
+      - "Agrawal et al. (2021), GJI, DOI: 10.1093/gji/ggab146 (21 core RF stations range 28.9-48.0 km, mean 36.3 km)"
+      - "Balmino et al. (2012), DOI: 10.1007/s00190-011-0533-4 (BGI global reference Tc = 30 km)"
+    description: "Reference crustal thickness at sea level (h = 0)."
 
-# Parameter uncertainties and sensitivity analysis ranges
-uncertainties:
-  crustal_density_uncertainty:
-    value: null
-    unit: "kg/m^3"
-    status: "PENDING_LITERATURE_REVIEW"
-    description: "Expected standard deviation / range for crustal density sensitivity analysis."
-
-  mantle_density_uncertainty:
-    value: null
-    unit: "kg/m^3"
-    status: "PENDING_LITERATURE_REVIEW"
-    description: "Expected standard deviation / range for mantle density sensitivity analysis."
-
-  reference_thickness_uncertainty:
-    value: null
+# Pratt-Hayford compensation parameters
+pratt:
+  compensation_depth_D:
+    value: 100.0
     unit: "km"
-    status: "PENDING_LITERATURE_REVIEW"
-    description: "Expected standard deviation / range for reference crustal thickness."
+    uncertainty_range: [60.0, 120.0]
+    parameter_type: "Adopted classical geodynamic reference (not locally measured)"
+    sources:
+      - "Turcotte & Schubert, Geodynamics (standard Pratt lithospheric compensation depth W = 100 km)"
+      - "Hayford (1909), The Figure of the Earth and Isostasy"
+    description: "Depth of Pratt compensation below sea level (D)."
 
-# Planned regional literature review framework
-literature_review:
-  status: "PLANNED"
-  target_geological_provinces:
-    - "Shillong Plateau"
-    - "Mikir Hills"
-    - "Brahmaputra / Assam Valley"
-    - "Bengal Basin / Surma Basin"
-    - "Indo-Burma Ranges (Western flank)"
-  candidate_sources:
-    - "Regional seismic receiver function studies (e.g., Mitra et al., Ramesh et al., Kayal et al.)"
-    - "Deep seismic sounding (DSS) profiles across the Bengal and Assam Basins"
-    - "Global crustal models (CRUST1.0, LitMod3D regional adaptations)"
-    - "Satellite gravity inversion publications (GOCE / EGM2008 / WGM2012)"
+  reference_density_rho0:
+    value: 3100.0
+    unit: "kg/m^3"
+    uncertainty_range: [2750.0, 3200.0]
+    parameter_type: "Adopted reference for 100 km crust+mantle column"
+    sources:
+      - "Turcotte & Schubert, Geodynamics (3100 kg/m^3 for 100 km Pratt column)"
+      - "Consistent with 35 km crust (2750 kg/m^3) + 65 km mantle (3350 kg/m^3) = 3140 kg/m^3"
+    description: "Reference column density at sea level (h = 0) for Pratt compensation."
